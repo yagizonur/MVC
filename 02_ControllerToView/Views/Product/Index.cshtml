@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Ürün Listesi - Controller to View";
+}
+
+<!--
+==========================================================
+CONTROLLER'DAN VIEW'E VERİ AKTARIMI 
+==========================================================
+- Controller tarafında oluşturulan liste veya model, View'e aktarılır.
+- Razor 'foreach' döngüsü ile Tailwind CSS lkartları dinamik olarak basılır.
+-->
+
+<div class="space-y-6">
+    <div class="border border-salte-800 pb-4">
+        <h1 class="text-3xl font-extrabold text-white">Ürün Kataloğu</h1>
+        <p class="text-slate-400 text-sm-center mt-1">CSharp Controller'dan Gelen Ürün Listesinin Tailwind ile Listelenmesi</p>
+    </div>
+    
+    @if(ViewData["products"] != null)
+    {
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            @foreach(var item in (List<string>)ViewData["products"])
+            {
+                <div class="bg-slate-800 border border-slate-700 hover:border-indigo-500 p-5 rounded-2xl shadow-lg transition duration-200 flex-column items-center space-x-3">
+                    <span class="font-semibold text-white">@item</span>
+                </div>
+            }
+        </div>
+    }
+
+</div>

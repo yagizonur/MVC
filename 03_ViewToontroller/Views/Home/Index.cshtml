@@ -1,0 +1,36 @@
+﻿
+
+<div class="max-w-md mx-auto bg-white rounded-2xl shadow-md overflow-hidden p-8 border border-slate-100">
+    <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">Kullanıcı Formu</h2>
+    <p class="text-xs text-slate-400 text-center mb-6">(Model Kullanmadan parametre eşleme yöntemi)</p>
+
+    <form asp-controller="Home" asp-action="SubmitForm" method="post" class="space-y-5">
+        <div>
+            <label for="userName" class="block text-sm font-medium text-slate-700 mb-1">Adınız</label>
+            <input id="userName" name="userName" type="text" placeholder="Adınızı Giriniz..." required class="w-full px-4 py-2 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus-ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900 placeholder-slate-400" />
+        </div>
+
+        <div>
+            <label for="userEmail" class="block text-sm font-medium text-slate-700 mb-1">Email Adresini Giriniz</label>
+            <input id="userEmail" name="userEmail" type="text" placeholder="Emailinizi Giriniz..." required class="w-full px-4 py-2 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus-ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900 placeholder-slate-400" />
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition duration-200 cursor-pointer text-center">
+            Veriyi Gönder
+        </button>
+    </form>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="mt-6 p-4 bg-emerald-50 border    border-emarald-200 text-emerald-800 rounded-2xl text-sm font-medium text-center">
+            @ViewBag.Message
+        </div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="mt-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm font-medium text-center">
+            @ViewBag.Error
+        </div>
+    }
+</div>

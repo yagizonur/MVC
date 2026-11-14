@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="01_MVC_Giris/01_MVC_Giris.csproj" />
+  <Project Path="02_ControllerToView/02_ControllerToView.csproj" />
+  <Project Path="03_ViewToontroller/03_ViewToontroller.csproj" Id="28e602b4-f051-4977-bc9f-c11f73cdc4f7" />
+  <Project Path="04_ModelExample/04_ModelExample.csproj" Id="f557103d-ab9c-4a0e-a6d5-0ebe3822a59c" />
+</Solution>
