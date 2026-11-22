@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Filtre Mimarisi (Filters & AOP)";
+}
+
+<!--
+====================================================================
+KONU: ASP.NET CORE FILTER PIPELINE & AOP MİMARİSİ
+====================================================================
+1. Filtrelerin Amacı (AOP - Aspect-Oriented Programming):
+   - Controller action'larında tekrar eden yetkilendirme, loglama,
+     hata yakalama ve model denetim kodlarını tek merkezden yönetmek.
+
+2. Filtre Pipeline Sıralaması:
+   - Authorization -> Resource -> Action -> Exception -> Result
+====================================================================
+-->
+
+<div class="space-y-6 max-w-5xl mx-auto">
+
+    <!-- Başlık -->
+    <div class="border-b border-slate-800 pb-4">
+        <span class="inline-block px-2.5 py-1 text-xs font-semibold bg-indigo-500/20 text-indigo-300 rounded-full mb-2">
+            Modül 15: Filtre Operasyonları
+        </span>
+        <h1 class="text-3xl font-extrabold text-white">Filtreler & AOP Mimarisi (Filter Pipeline)</h1>
+        <p class="text-slate-400 text-sm mt-1">Cross-Cutting Concerns (Yetkilendirme, Loglama, Hata Yönetimi) operasyonlarının merkezi yönetimi</p>
+    </div>
+
+    <!-- Filtre Boru Hattı Görsel Şeması -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span>🧭</span>
+            <span>Filtre Çalışma Sırası (Filter Pipeline Order)</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-center text-xs font-mono">
+            <div class="bg-slate-900 p-3 rounded-xl border border-rose-500/40 text-rose-300 space-y-1">
+                <span class="font-bold block">1. Authorization</span>
+                <span class="text-[10px] text-slate-400">Yetki Kontrolü</span>
+            </div>
+            <div class="bg-slate-900 p-3 rounded-xl border border-amber-500/40 text-amber-300 space-y-1">
+                <span class="font-bold block">2. Resource</span>
+                <span class="text-[10px] text-slate-400">Önbellek & Çıktı</span>
+            </div>
+            <div class="bg-slate-900 p-3 rounded-xl border border-indigo-500/40 text-indigo-300 space-y-1">
+                <span class="font-bold block">3. Action Filter</span>
+                <span class="text-[10px] text-slate-400">Öncesi / Sonrası</span>
+            </div>
+            <div class="bg-slate-900 p-3 rounded-xl border border-purple-500/40 text-purple-300 space-y-1">
+                <span class="font-bold block">4. Exception</span>
+                <span class="text-[10px] text-slate-400">Hata Yakalama</span>
+            </div>
+            <div class="bg-slate-900 p-3 rounded-xl border border-emerald-500/40 text-emerald-300 space-y-1">
+                <span class="font-bold block">5. Result Filter</span>
+                <span class="text-[10px] text-slate-400">View Render</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3 İnteraktif Test Kartı -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- 1. ActionFilter Testi -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">1. ActionFilter</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-500/20 text-indigo-300 rounded">Aktif</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Bu sayfa çağrılırken <code>[ServiceFilter(typeof(ActionFilter))]</code> devreye girdi.
+            </p>
+            <div class="bg-slate-900 p-3 rounded-xl text-xs font-mono border border-slate-800 space-y-1">
+                <span class="text-slate-500 block">OnActionExecuting Saati:</span>
+                <span class="text-emerald-400 font-bold">@ViewBag.ExecutingTime</span>
+            </div>
+        </div>
+
+        <!-- 2. ExceptionFilter Testi -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">2. ExceptionFilter</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold bg-purple-500/20 text-purple-300 rounded">Hata Yönetimi</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Kasıtlı bir Exception fırlatıp ExceptionFilter'ın nasıl yakaladığını test edin.
+            </p>
+            <div class="pt-2">
+                <a asp-action="SpecialAction" class="block w-full text-center py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-semibold transition shadow-md shadow-purple-600/30">
+                    Hata Fırlat ve Test Et 💥
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. AuthorizationFilter Testi -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">3. AuthorizationFilter</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold bg-rose-500/20 text-rose-300 rounded">Yetki Denetimi</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Yetkisiz ve yetkili erişim senaryolarını canlı simüle edin:
+            </p>
+            <div class="space-y-2 pt-1">
+                <a asp-action="AdminOnly" class="block w-full text-center py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-lg text-xs font-semibold transition border border-rose-500/30">
+                    Yetkisiz Dene (403 Alır) 🚫
+                </a>
+                <a asp-action="AdminOnly" asp-route-role="admin" class="block w-full text-center py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 rounded-lg text-xs font-semibold transition border border-emerald-500/30">
+                    Admin Rolüyle Dene (200 OK) ✔
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ServiceFilter vs TypeFilter vs Global Açıklama -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-3">
+        <h3 class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Filtreleri Uygulama Yolları</h3>
+        <ul class="text-xs text-slate-300 space-y-2 leading-relaxed">
+            <li><strong class="text-sky-400">[ServiceFilter(typeof(T))]:</strong> Filtre sınıfı Program.cs içinde IoC Container'a kaydedilir (AddScoped). Filtre kendi constructor'ında DI ile veritabanı veya logger alabilir.</li>
+            <li><strong class="text-amber-400">[TypeFilter(typeof(T))]:</strong> IoC kaydı zorunlu değildir, parametreler attribute üzerinden geçirilebilir.</li>
+            <li><strong class="text-emerald-400">Global Filtreler:</strong> <code>builder.Services.AddControllersWithViews(opt => opt.Filters.Add&lt;MyFilter&gt;())</code> şeklinde tüm uygulamadaki her Controller ve Action için otomatik çalıştırılır.</li>
+        </ul>
+    </div>
+
+</div>

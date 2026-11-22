@@ -5,4 +5,8 @@
   <Project Path="04_ModelExample/04_ModelExample.csproj" Id="f557103d-ab9c-4a0e-a6d5-0ebe3822a59c" />
   <Project Path="05_Model_Binding/05_Model_Binding.csproj" Id="457292a8-20ec-42f1-84c8-0b70c8d16d78" />
   <Project Path="06_Dependency_Injection/06_Dependency_Injection.csproj" Id="2cefc0f1-441d-4931-b325-d53034a38bd5" />
+  <Project Path="07_State_Management/07_State_Management.csproj" Id="1e733540-d7d3-4c26-bdd6-c39fed469fa3" />
+  <Project Path="08_Middleware/08_Middleware.csproj" Id="aff9970c-23e0-43ce-a937-c99bd8e6da87" />
+  <Project Path="09_Filter_Operations/09_Filter_Operations.csproj" Id="98bbf381-b931-4ba5-bd0a-ecf1bb96519c" />
+  <Project Path="10_AutoMapper/10_AutoMapper.csproj" Id="45e33833-f993-4d51-9292-c71826dcddf1" />
 </Solution>

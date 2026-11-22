@@ -1,0 +1,76 @@
+@model _10_AutoMapper.Models.User
+@{
+    ViewData["Title"] = "Tersine Eşleme (ReverseMap)";
+    var sourceDto = ViewBag.SourceDto as _10_AutoMapper.Dtos.UserDto;
+}
+
+<!--
+====================================================================
+KONU: REVERSEMAP() İLE TERSİNE EŞLEME
+====================================================================
+CreateMap<User, UserDto>().ReverseMap();
+satırındaki .ReverseMap() metodu, UserDto nesnesinden geriye
+User (Entity) nesnesi üretilirken de eşleme kurallarının tersine
+otomatik işletilmesini sağlar.
+====================================================================
+-->
+
+<div class="space-y-6 max-w-5xl mx-auto">
+
+    <div class="border-b border-slate-800 pb-4">
+        <span class="inline-block px-2.5 py-1 text-xs font-semibold bg-sky-500/20 text-sky-300 rounded-full mb-2">
+            Çift Yönlü Eşleme
+        </span>
+        <h1 class="text-3xl font-extrabold text-white">ReverseMap(): DTO ➔ Entity Dönüşümü</h1>
+        <p class="text-slate-400 text-sm mt-1">İstemciden gelen DTO nesnesinin tersine veritabanı modeline (Entity) çevrilmesi</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 items-center">
+
+        <!-- Sol: Kaynak DTO (5 Kolon) -->
+        <div class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Kaynak: UserDto (DTO)</span>
+                <span class="px-2 py-0.5 text-[10px] bg-sky-500/20 text-sky-300 rounded font-mono">İstemci Verisi</span>
+            </div>
+
+            <div class="bg-slate-900 p-4 rounded-xl space-y-2 text-xs font-mono text-slate-300 border border-slate-800">
+                <p><span class="text-slate-500">Id:</span> @sourceDto?.Id</p>
+                <p><span class="text-sky-400 font-bold">FullName:</span> @sourceDto?.FullName</p>
+                <p><span class="text-sky-400">Email:</span> @sourceDto?.Email</p>
+            </div>
+        </div>
+
+        <!-- Orta: Dönüşüm Oku (1 Kolon) -->
+        <div class="lg:col-span-1 text-center py-2 flex flex-col items-center justify-center">
+            <span class="text-2xl text-sky-400">➔</span>
+            <span class="text-[10px] font-mono text-slate-400 mt-1 block">ReverseMap</span>
+        </div>
+
+        <!-- Sağ: Hedef Entity (5 Kolon) -->
+        <div class="lg:col-span-5 bg-slate-800 border border-indigo-500/40 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Hedef: User (Entity)</span>
+                <span class="px-2 py-0.5 text-[10px] bg-indigo-500/20 text-indigo-300 rounded font-mono">Veritabanı Nesnesi</span>
+            </div>
+
+            <div class="bg-slate-900 p-4 rounded-xl space-y-2 text-xs font-mono text-slate-300 border border-slate-800">
+                <p><span class="text-slate-500">Id:</span> @Model.Id</p>
+                <p><span class="text-indigo-400 font-bold">FirstName:</span> @Model.FirstName</p>
+                <p><span class="text-indigo-400 font-bold">LastName:</span> @Model.LastName</p>
+                <p><span class="text-sky-400">Email:</span> @Model.Email</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 pt-2">
+        <a asp-action="Index" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30">
+            ← Entity ➔ DTO Sayfasına Dön
+        </a>
+        <a asp-controller="Integration" asp-action="Index" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition shadow-lg shadow-emerald-600/30">
+            ⚡ 3. Dış API Entegrasyonu (Gerçek Hayat) →
+        </a>
+    </div>
+
+</div>

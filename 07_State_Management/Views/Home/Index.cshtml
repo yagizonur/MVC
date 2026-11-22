@@ -1,0 +1,199 @@
+﻿@{
+    ViewData["Title"] = "State Management (Durum Yönetimi)";
+}
+
+<!--
+====================================================================
+KONU: STATE MANAGEMENT (DURUM YÖNETİMİ) ARAÇLARI
+====================================================================
+1. Session:
+   - Sunucu tarafında saklanır, kullanıcıya özeldir (Oturum bazlı).
+   - HttpContext.Session.SetString() ve GetString() ile yönetilir.
+
+2. Cookie:
+   - İstemci tarayıcısında saklanır. Response.Cookies.Append() ile yazılır,
+     Request.Cookies ile okunur. HttpOnly güvenlik için kritiktir.
+
+3. MemoryCache:
+   - Sunucu RAM'inde tüm uygulama için saklanan yüksek hızlı önbellektir.
+   - IMemoryCache.Set() ve TryGetValue() ile kullanılır.
+====================================================================
+-->
+
+<div class="space-y-6 max-w-5xl mx-auto">
+
+    <!-- Başlık -->
+    <div class="border-b border-slate-800 pb-4">
+        <span class="inline-block px-2.5 py-1 text-xs font-semibold bg-indigo-500/20 text-indigo-300 rounded-full mb-2">
+            Modül 13: Durum Yönetimi
+        </span>
+        <h1 class="text-3xl font-extrabold text-white">State Management (Durum Yönetimi)</h1>
+        <p class="text-slate-400 text-sm mt-1">HTTP'nin durumsuz (Stateless) yapısını Session, Cookie ve MemoryCache ile yönetme</p>
+    </div>
+
+    <!-- Bildirim Mesajı (TempData) -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="p-4 bg-emerald-950/40 border border-emerald-500/50 rounded-2xl text-emerald-400 text-xs font-semibold flex items-center gap-2 shadow-lg">
+            <span>⚡</span>
+            <span>@TempData["Message"]</span>
+        </div>
+    }
+
+    <!-- 3 Sütunlu İnteraktif Kartlar -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- 1. SESSION KARTI -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">1. Session (Oturum)</span>
+                    <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-500/20 text-indigo-300 rounded">Sunucu RAM</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Kullanıcının o anki oturumu süresince sunucuda saklanır.</p>
+
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <span class="text-[11px] text-slate-500 block">Aktif Session ("UserName"):</span>
+                    <div class="text-sm font-mono font-bold @(ViewBag.SessionUser != null ? "text-emerald-400" : "text-slate-600")">
+                        @(ViewBag.SessionUser ?? "(Tanımlı Değil)")
+                    </div>
+                </div>
+
+                <!-- Session Ekleme Formu -->
+                <form asp-action="SetSession" method="post" class="space-y-2">
+                    <input type="text" name="username" placeholder="Kullanıcı Adı Girin" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                    <button type="submit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition">
+                        Session'a Kaydet
+                    </button>
+                </form>
+            </div>
+
+            @if (ViewBag.SessionUser != null)
+            {
+                <form asp-action="ClearSession" method="post" class="pt-2 border-t border-slate-700/60">
+                    <button type="submit" class="w-full py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-lg text-xs font-semibold transition">
+                        Session'ı Sil 🗑️
+                    </button>
+                </form>
+            }
+        </div>
+
+        <!-- 2. COOKIE KARTI -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">2. Cookie (Çerez)</span>
+                    <span class="px-2 py-0.5 text-[10px] font-bold bg-sky-500/20 text-sky-300 rounded">İstemci Tarayıcı</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Tarayıcıda saklanır; tarayıcı kapansa bile geçerliliğini korur.</p>
+
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <span class="text-[11px] text-slate-500 block">Aktif Cookie ("AppTheme"):</span>
+                    <div class="text-sm font-mono font-bold @(ViewBag.CookieTheme != null ? "text-sky-400" : "text-slate-600")">
+                        @(ViewBag.CookieTheme ?? "(Tanımlı Değil)")
+                    </div>
+                </div>
+
+                <!-- Cookie Ekleme Formu -->
+                <form asp-action="SetCookie" method="post" class="space-y-2">
+                    <select name="theme" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <option value="Dark Velvet">Dark Velvet (Karanlık Tema)</option>
+                        <option value="Emerald Cyber">Emerald Cyber (Yeşil Tema)</option>
+                        <option value="Ocean Blue">Ocean Blue (Mavi Tema)</option>
+                    </select>
+                    <button type="submit" class="w-full py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-semibold transition">
+                        Cookie Olarak Kaydet (7 Gün)
+                    </button>
+                </form>
+            </div>
+
+            @if (ViewBag.CookieTheme != null)
+            {
+                <form asp-action="ClearCookie" method="post" class="pt-2 border-t border-slate-700/60">
+                    <button type="submit" class="w-full py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-lg text-xs font-semibold transition">
+                        Cookie'yi Sil 🗑️
+                    </button>
+                </form>
+            }
+        </div>
+
+        <!-- 3. MEMORY CACHE KARTI -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">3. MemoryCache</span>
+                    <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-300 rounded">Yüksek Hızlı RAM</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Tüm uygulama için genel önbellekleme sağlar (60 sn süreli).</p>
+
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <span class="text-[11px] text-slate-500 block">Önbellek ("CachedData"):</span>
+                    <div class="text-sm font-mono font-bold @(ViewBag.HasCache ? "text-amber-400" : "text-slate-600")">
+                        @(ViewBag.CachedData ?? "(Önbellek Boş veya Süresi Doldu)")
+                    </div>
+                </div>
+
+                <!-- Cache Ekleme Formu -->
+                <form asp-action="SetCache" method="post" class="space-y-2">
+                    <input type="text" name="cacheData" placeholder="Önbelleğe Alınacak Veri" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-none" />
+                    <button type="submit" class="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold transition">
+                        MemoryCache'e Yaz (60 sn)
+                    </button>
+                </form>
+            </div>
+
+            @if (ViewBag.HasCache)
+            {
+                <form asp-action="ClearCache" method="post" class="pt-2 border-t border-slate-700/60">
+                    <button type="submit" class="w-full py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-lg text-xs font-semibold transition">
+                        Cache'i Temizle 🗑️
+                    </button>
+                </form>
+            }
+        </div>
+
+    </div>
+
+    <!-- Karşılaştırma Matrisi -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <h2 class="text-base font-bold text-white">Durum Yönetimi (State Management) Karşılaştırma Tablosu</h2>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900 text-slate-400 uppercase font-mono">
+                    <tr>
+                        <th class="p-3">Teknoloji</th>
+                        <th class="p-3">Depolama Konumu</th>
+                        <th class="p-3">Ömür (Kalıcılık)</th>
+                        <th class="p-3">Kullanım Amacı</th>
+                        <th class="p-3">Güvenlik</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700">
+                    <tr>
+                        <td class="p-3 font-bold text-indigo-400">Session</td>
+                        <td class="p-3">Sunucu Belleği (RAM)</td>
+                        <td class="p-3">Tarayıcı açıkken / Zaman aşımı (30 dk)</td>
+                        <td class="p-3">Alışveriş sepeti, aktif oturum bilgisi</td>
+                        <td class="p-3"><span class="text-emerald-400 font-semibold">Yüksek (Veri sunucuda)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-bold text-sky-400">Cookie</td>
+                        <td class="p-3">İstemci Tarayıcısı</td>
+                        <td class="p-3">Belirtilen Expire tarihine kadar</td>
+                        <td class="p-3">Beni hatırla, tema, dil tercihi</td>
+                        <td class="p-3"><span class="text-amber-400 font-semibold">Orta (HttpOnly şart!)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-bold text-amber-400">MemoryCache</td>
+                        <td class="p-3">Sunucu RAM'i (Genel)</td>
+                        <td class="p-3">Absolute / Sliding süre bitimi</td>
+                        <td class="p-3">Döviz kurları, kategori ağacı, ürünler</td>
+                        <td class="p-3"><span class="text-emerald-400 font-semibold">Yüksek (Sunucu içi)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

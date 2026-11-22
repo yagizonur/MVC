@@ -1,0 +1,256 @@
+﻿@model _10_AutoMapper.Models.Customer
+@{
+    ViewData["Title"] = "Gerçek Hayat: Dış API Entegrasyonu & AutoMapper";
+    var externalDto = ViewBag.ExternalDto as _10_AutoMapper.Dtos.ExternalCustomerDto;
+    var rawJson = ViewBag.RawJson as string;
+}
+
+<!--
+====================================================================
+KONU: DIŞ KAYNAK / 3. PARTİ API ENTEGRASYONU & AUTOMAPPER
+MİMARİ DESEN: ANTI-CORRUPTION LAYER (ACL - BOZULMAYI ÖNLEME KATMANI)
+====================================================================
+Gerçek hayatta dış servislerden (Ödeme, CRM, Kargo, ERP, B2B Tedarikçi)
+gelen veriler kendi domain modelimizle birebir uyuşmaz.
+AutoMapper bu iki dünya arasında güvenli, performanslı ve temiz bir
+tercüman (Adapter/Mapper) görevi görür.
+====================================================================
+-->
+
+<div class="space-y-8 max-w-6xl mx-auto">
+
+    <!-- Üst Başlık & Açıklama -->
+    <div class="border-b border-slate-800 pb-5">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="px-2.5 py-1 text-xs font-semibold bg-purple-500/20 text-purple-300 rounded-full">
+                ⚡ Gerçek Hayat Senaryosu
+            </span>
+            <span class="px-2.5 py-1 text-xs font-semibold bg-emerald-500/20 text-emerald-300 rounded-full">
+                Anti-Corruption Layer (ACL)
+            </span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-white">Dış Servis (3. Parti API) ➔ İç Domain Modeli Eşleme</h1>
+        <p class="text-slate-400 text-sm mt-1">
+            Harici REST API / Webhook'tan gelen farklı isimlendirmeli ve formatlı JSON verisinin AutoMapper ile temiz kurumsal entity modelimize dönüştürülmesi
+        </p>
+    </div>
+
+    <!-- Karşılaştırmalı 3 Sütunlu Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 items-stretch">
+
+        <!-- 1. SOL PANEL: Dış API'den Gelen Ham Veri (5 Kolon) -->
+        <div class="lg:col-span-5 bg-slate-800/90 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4">
+            <div>
+                <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
+                        <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Kaynak: 3. Parti REST API (JSON)</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-rose-500/20 text-rose-300 rounded font-mono">ExternalCustomerDto</span>
+                </div>
+
+                <!-- Ham JSON Önizleme -->
+                <div class="space-y-2">
+                    <span class="text-[11px] font-bold uppercase text-slate-400">Gelen Ham JSON Yanıtı:</span>
+                    <pre class="bg-slate-950 p-3 rounded-xl text-[11px] font-mono text-amber-300/90 border border-slate-800 overflow-x-auto max-h-48 leading-relaxed">@rawJson</pre>
+                </div>
+
+                <!-- DTO Olarak Çözümlenmiş Özellikler -->
+                <div class="mt-4 bg-slate-900/90 p-4 rounded-xl space-y-1.5 text-xs font-mono text-slate-300 border border-slate-800">
+                    <p><span class="text-slate-500">external_id:</span> <span class="text-amber-400">"@externalDto?.ExtarnalId"</span></p>
+                    <p><span class="text-slate-500">first_name:</span> <span class="text-sky-300">"@externalDto?.FirstName"</span></p>
+                    <p><span class="text-slate-500">last_name:</span> <span class="text-sky-300">"@externalDto?.LastName"</span></p>
+                    <p><span class="text-slate-500">contact_email:</span> <span class="text-indigo-300">"@externalDto?.ContactEmail"</span></p>
+                    <p><span class="text-slate-500">status_code:</span> <span class="text-emerald-400 font-bold">"@externalDto?.StatusCode"</span></p>
+                    <p><span class="text-slate-500">balance_cents:</span> <span class="text-amber-400">@externalDto?.BalanceCents</span> <span class="text-[10px] text-slate-500">(Kuruş/Cent)</span></p>
+                    <p><span class="text-slate-500">created_timestamp:</span> <span class="text-slate-400">"@externalDto?.CreatedTimestamp"</span></p>
+                    <div class="pt-2 border-t border-slate-800/80 text-[11px]">
+                        <span class="text-purple-400 font-semibold block mb-0.5">📦 address (İç İçe Nesne):</span>
+                        <span class="text-slate-400">@externalDto?.Address?.Street, @externalDto?.Address?.District / @externalDto?.Address?.City (@externalDto?.Address?.ZipCode)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-rose-950/30 border border-rose-800/40 rounded-xl text-[11px] text-rose-300/90">
+                ⚠️ <strong>Problem:</strong> snake_case alanlar, iç içe nesneler ve cent cinsinden tamsayı tutar içerir. Doğrudan veritabanımıza veya UI'a verilemez!
+            </div>
+        </div>
+
+        <!-- 2. ORTA PANEL: AutoMapper Köprüsü (1 Kolon) -->
+        <div class="lg:col-span-1 flex flex-col items-center justify-center py-4">
+            <div class="w-10 h-10 rounded-full bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-indigo-400 text-lg shadow-lg">
+                ➔
+            </div>
+            <span class="text-[11px] font-bold text-indigo-400 mt-2 text-center uppercase tracking-wider">AutoMapper</span>
+            <span class="text-[9px] text-slate-400 text-center font-mono">Dönüştürücü</span>
+        </div>
+
+        <!-- 3. SAĞ PANEL: Kendi İç Sistemimizdeki Model (5 Kolon) -->
+        <div class="lg:col-span-5 bg-slate-800/90 border border-emerald-500/50 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4">
+            <div>
+                <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Hedef: Bizim İç Sistemimiz (C# PascalCase)</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-300 rounded font-mono">Customer Entity</span>
+                </div>
+
+                <!-- Dönüştürülmüş Kurumsal Domain Nesnesi -->
+                <div class="bg-slate-900/90 p-4 rounded-xl space-y-2.5 text-xs font-mono text-slate-200 border border-slate-800">
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                        <span class="text-slate-400 font-sans">Sistem Id (İç DB):</span>
+                        <span class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs font-bold">#@Model.Id</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-sans">Müşteri Kodu (CustomerCode):</span>
+                        <span class="text-amber-400 font-bold">@Model.CustomerCode</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-sans">Ad Soyad (FullName):</span>
+                        <span class="text-emerald-400 font-bold text-sm">@Model.FullName</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-sans">E-Posta (Email):</span>
+                        <span class="text-sky-400">@Model.Email</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-sans">Telefon:</span>
+                        <span class="text-slate-300">@Model.PhoneNumber</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-sans">Şehir (City - Flattened):</span>
+                        <span class="text-indigo-400 font-semibold">@Model.City</span>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800">
+                        <span class="text-slate-400 font-sans block mb-1">Düzleştirilmiş Açık Adres (FullAddress):</span>
+                        <span class="text-slate-300 text-[11px] leading-relaxed block bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            @Model.FullAddress
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                        <span class="text-slate-400 font-sans">Müşteri Durumu:</span>
+                        @if (Model.IsActive)
+                        {
+                            <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full text-[11px] font-sans font-bold flex items-center gap-1">
+                                <span>✔</span> Aktif Müşteri (true)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="px-2.5 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-full text-[11px] font-sans font-bold">
+                                Pasif Müşteri (false)
+                            </span>
+                        }
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-sans">Hesap Bakiyesi (TotalBalance):</span>
+                        <span class="text-amber-400 font-extrabold text-sm">@Model.TotalBalance.ToString("C2", new System.Globalization.CultureInfo("tr-TR"))</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-sans">Kayıt Tarihi:</span>
+                        <span class="text-purple-300">@Model.RegisteredDate.ToString("dd MMMM yyyy HH:mm")</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-emerald-950/30 border border-emerald-800/40 rounded-xl text-[11px] text-emerald-300/90">
+                ✔ <strong>Çözüm:</strong> Veritabanımıza ve iş mantığımıza sadece güçlü tipli, temiz C# standartlarında güvenli nesne girer.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Uygulanan Eşleme Profili Kod Bloğu -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <span>⚙️</span>
+                <span>ExternalIntegrationProfile.cs: Eşleme Kuralları</span>
+            </h3>
+            <span class="text-xs text-indigo-400 font-mono">CreateMap&lt;ExternalCustomerDto, Customer&gt;()</span>
+        </div>
+
+        <div class="bg-slate-950 p-4 rounded-xl text-xs font-mono text-slate-300 border border-slate-800 overflow-x-auto leading-relaxed">
+            <span class="text-purple-400">CreateMap</span>&lt;<span class="text-amber-300">ExternalCustomerDto</span>, <span class="text-emerald-300">Customer</span>&gt;()
+            <span class="text-slate-500">// 1. Farklı İsim Eşlemesi (ExternalId -> CustomerCode)</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">CustomerCode</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; src.<span class="text-amber-300">ExternalId</span>))
+
+            <span class="text-slate-500">// 2. Alan Birleştirme (FirstName + LastName -> FullName)</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">FullName</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; <span class="text-emerald-300">$"{src.FirstName} {src.LastName}".Trim()</span>))
+
+            <span class="text-slate-500">// 3. İsim Eşlemesi (ContactEmail -> Email)</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">Email</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; src.<span class="text-amber-300">ContactEmail</span>))
+
+            <span class="text-slate-500">// 4. İç İçe Nesneden Alan Çekme (Address.City -> City) [Flattening]</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">City</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; src.<span class="text-amber-300">Address</span> != <span class="text-rose-400">null</span> ? src.<span class="text-amber-300">Address</span>.<span class="text-indigo-300">City</span> : <span class="text-emerald-300">""</span>))
+
+            <span class="text-slate-500">// 5. İç İçe Adresi Açık Metne Biçimlendirme</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">FullAddress</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; src.<span class="text-amber-300">Address</span> != <span class="text-rose-400">null</span> ? <span class="text-emerald-300">$"{src.Address.Street}, {src.Address.District} / {src.Address.City}"</span> : <span class="text-emerald-300">"Adres Yok"</span>))
+
+            <span class="text-slate-500">// 6. Durum Kodunu Boolean'a Çevirme ("ACTIVE" -> true)</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">IsActive</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; string.<span class="text-sky-300">Equals</span>(src.<span class="text-amber-300">StatusCode</span>, <span class="text-emerald-300">"ACTIVE"</span>, StringComparison.OrdinalIgnoreCase)))
+
+            <span class="text-slate-500">// 7. Kuruş (Cent) Cinsinden Gelen Tutarı Decimal Liraya Çevirme (254990 -> 2549.90 TL)</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">TotalBalance</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; src.<span class="text-amber-300">BalanceCents</span> / <span class="text-cyan-400">100m</span>))
+
+            <span class="text-slate-500">// 8. ISO Tarih String'ini DateTime Formatına Çevirme</span>
+            .<span class="text-sky-300">ForMember</span>(dest =&gt; dest.<span class="text-indigo-300">RegisteredDate</span>, opt =&gt; opt.<span class="text-sky-300">MapFrom</span>(src =&gt; DateTime.<span class="text-sky-300">TryParse</span>(src.<span class="text-amber-300">CreatedTimestamp</span>, <span class="text-rose-400">out var</span> dt) ? dt : DateTime.UtcNow));
+        </div>
+    </div>
+
+    <!-- Gerçek Hayat Mimarisi & Neden Yapıyoruz? (Bilgi Kartları) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold">
+                🛡️
+            </div>
+            <h4 class="text-sm font-bold text-white">Anti-Corruption Layer (ACL)</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                Domain-Driven Design (DDD) prensibidir. Dış servisteki alan adları veya format değişiklikleri projenizin veritabanı veya iş katmanına sızamaz. Dış dünya kapıda filtrelenir.
+            </p>
+        </div>
+
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-xl font-bold">
+                🔄
+            </div>
+            <h4 class="text-sm font-bold text-white">Düzleştirme & Dönüştürme</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                İç içe JSON nesneleri (nested objects), kuruş/cent dönüşümleri, string-boolean bayrakları AutoMapper'ın <code class="text-indigo-300">ForMember</code> ve <code class="text-indigo-300">MapFrom</code> kuralları ile tek noktada yönetilir.
+            </p>
+        </div>
+
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold">
+                🚀
+            </div>
+            <h4 class="text-sm font-bold text-white">Sıfır Bakım Maliyeti</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                Yarın entegre olduğunuz 3. parti API <code class="text-amber-300">first_name</code> alanını <code class="text-amber-300">given_name</code> yaparsa, tüm projede arama yapmazsınız. Sadece Profile sınıfında tek bir satırı güncellersiniz.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Gezinme Butonları -->
+    <div class="flex items-center gap-3 pt-2">
+        <a asp-controller="User" asp-action="Index" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold rounded-xl transition border border-slate-700">
+            ← 1. Entity ➔ DTO Sayfası
+        </a>
+        <a asp-controller="User" asp-action="MappingTest" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold rounded-xl transition border border-slate-700">
+            2. DTO ➔ Entity (ReverseMap) Sayfası
+        </a>
+    </div>
+
+</div>
