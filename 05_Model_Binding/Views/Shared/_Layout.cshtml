@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="tr" class="h-full">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Model Binding Mimarisi</title>
+    <!-- Tailwind CSS 3.x CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col font-sans antialiased">
+
+    <!-- Üst Menü / Navbar -->
+    <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700/80 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a asp-controller="Home" asp-action="Index" class="text-indigo-400 font-bold text-lg flex items-center gap-2">
+                <span>🔄</span>
+                <span>10_Models_Binding</span>
+            </a>
+            <nav class="flex items-center gap-2 md:gap-4 text-xs md:text-sm font-medium">
+                <a asp-controller="Home" asp-action="Index" class="text-slate-300 hover:text-white transition px-3 py-1.5 rounded-lg hover:bg-slate-700/50">1. Tekil Model</a>
+                <a asp-controller="Home" asp-action="HomePage2" class="text-slate-300 hover:text-white transition px-3 py-1.5 rounded-lg hover:bg-slate-700/50">2. ViewModel (Çoklu Model)</a>
+                <a asp-controller="Home" asp-action="BindingSources" asp-route-id="42" class="text-slate-300 hover:text-white transition px-3 py-1.5 rounded-lg hover:bg-slate-700/50">3. Binding Kaynakları</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Ana Gövde -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        @RenderBody()
+    </main>
+
+    <!-- Alt Bilgi -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        &copy; @DateTime.Now.Year - ASP.NET Core MVC Model Binding & ViewModel Mimarisi
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -3,4 +3,6 @@
   <Project Path="02_ControllerToView/02_ControllerToView.csproj" />
   <Project Path="03_ViewToontroller/03_ViewToontroller.csproj" Id="28e602b4-f051-4977-bc9f-c11f73cdc4f7" />
   <Project Path="04_ModelExample/04_ModelExample.csproj" Id="f557103d-ab9c-4a0e-a6d5-0ebe3822a59c" />
+  <Project Path="05_Model_Binding/05_Model_Binding.csproj" Id="457292a8-20ec-42f1-84c8-0b70c8d16d78" />
+  <Project Path="06_Dependency_Injection/06_Dependency_Injection.csproj" Id="2cefc0f1-441d-4931-b325-d53034a38bd5" />
 </Solution>

@@ -1,0 +1,163 @@
+﻿@model List<Student>
+@{
+    ViewData["Title"] = "Dependency Injection & Servis Yaşam Döngüleri";
+}
+
+<!--
+====================================================================
+KONU: DEPENDENCY INJECTION & SERVICE LIFETIMES DEMOSU
+====================================================================
+1. Transient (AddTransient):
+   - Her çağrıda yeni bir örnek oluştuğu için 1. Çağrı ve 2. Çağrı GUID değerleri BİRBİRİNDEN FARKLIDIR.
+
+2. Scoped (AddScoped):
+   - Aynı HTTP isteği süresince aynı nesne korunduğu için 1. ve 2. Çağrı GUID değerleri BİREBİR AYNIDIR.
+   - Sayfayı yenilediğinizde (yeni bir HTTP isteği) bu GUID değişecektir.
+
+3. Singleton (AddSingleton):
+   - Uygulama ayağa kalktığında üretilen tek bir nesne paylaşıldığı için
+     sayfayı istediğiniz kadar yenileyin, bu GUID ASLA DEĞİŞMEZ!
+====================================================================
+-->
+
+<div class="space-y-6 max-w-5xl mx-auto">
+
+    <!-- Başlık -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+            <span class="inline-block px-2.5 py-1 text-xs font-semibold bg-indigo-500/20 text-indigo-300 rounded-full mb-2">
+                Modül 12: Dependency Injection
+            </span>
+            <h1 class="text-3xl font-extrabold text-white">Servis Yaşam Döngüleri (Lifetimes)</h1>
+            <p class="text-slate-400 text-sm mt-1">Transient, Scoped ve Singleton servislerin aynı HTTP isteğindeki davranış farkı</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition shadow-lg shadow-indigo-600/30">
+                🔄 Sayfayı Yenile (Yeni İstek Başlat)
+            </a>
+        </div>
+    </div>
+
+    <!-- 3 Servis Yaşam Döngüsü Kartı -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- 1. Transient Kartı -->
+        <div class="bg-slate-800 border border-amber-500/40 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">1. Transient (Geçici)</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-300 rounded">Her Çağrıda Yeni</span>
+            </div>
+            <p class="text-xs text-slate-300">Her enjeksiyonda yeni nesne üretilir.</p>
+
+            <div class="bg-slate-900 p-3 rounded-xl space-y-2 border border-slate-800 text-[11px] font-mono">
+                <div>
+                    <span class="text-slate-500 block">1. Çağrı (Constructor):</span>
+                    <span class="text-amber-300 break-all">@ViewBag.Transient1</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">2. Çağrı ([FromServices]):</span>
+                    <span class="text-amber-300 break-all">@ViewBag.Transient2</span>
+                </div>
+            </div>
+
+            <div class="p-2 rounded-lg text-center text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                ❌ Eşit Değil (Farklı Örnekler!)
+            </div>
+        </div>
+
+        <!-- 2. Scoped Kartı -->
+        <div class="bg-slate-800 border border-sky-500/40 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">2. Scoped (Kapsamlı)</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold bg-sky-500/20 text-sky-300 rounded">İstek Başına 1 Kez</span>
+            </div>
+            <p class="text-xs text-slate-300">Aynı HTTP isteğinde aynı nesne korunur.</p>
+
+            <div class="bg-slate-900 p-3 rounded-xl space-y-2 border border-slate-800 text-[11px] font-mono">
+                <div>
+                    <span class="text-slate-500 block">1. Çağrı (Constructor):</span>
+                    <span class="text-sky-300 break-all">@ViewBag.Scoped1</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">2. Çağrı ([FromServices]):</span>
+                    <span class="text-sky-300 break-all">@ViewBag.Scoped2</span>
+                </div>
+            </div>
+
+            <div class="p-2 rounded-lg text-center text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                ✔ Eşit (Aynı HTTP İsteği!)
+            </div>
+        </div>
+
+        <!-- 3. Singleton Kartı -->
+        <div class="bg-slate-800 border border-emerald-500/40 rounded-2xl p-5 shadow-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">3. Singleton (Tekil)</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-300 rounded">Uygulama Boyunca Tek</span>
+            </div>
+            <p class="text-xs text-slate-300">Uygulama yaşamı boyunca tek bir nesne paylaşılır.</p>
+
+            <div class="bg-slate-900 p-3 rounded-xl space-y-2 border border-slate-800 text-[11px] font-mono">
+                <div>
+                    <span class="text-slate-500 block">1. Çağrı (Constructor):</span>
+                    <span class="text-emerald-300 break-all">@ViewBag.Singleton1</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">2. Çağrı ([FromServices]):</span>
+                    <span class="text-emerald-300 break-all">@ViewBag.Singleton2</span>
+                </div>
+            </div>
+
+            <div class="p-2 rounded-lg text-center text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                ✔ Eşit (Sayfa Yenilense de Değişmez!)
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Enjekte Edilen IMyService'den Gelen Öğrenci Verileri -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span>🎓</span>
+                <span>IMyService Enjeksiyonu ile Gelen Öğrenci Listesi</span>
+            </h2>
+            <span class="text-xs text-slate-400 font-mono">Constructor Injection</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900 text-slate-400 uppercase font-mono">
+                    <tr>
+                        <th class="p-3">ID</th>
+                        <th class="p-3">Öğrenci Adı</th>
+                        <th class="p-3">Bölüm</th>
+                        <th class="p-3">Genel Not Ortalaması (GPA)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700">
+                    @foreach (var student in Model)
+                    {
+                        <tr class="hover:bg-slate-700/30 transition">
+                            <td class="p-3 font-mono text-indigo-400 font-bold">#@student.Id</td>
+                            <td class="p-3 font-medium text-white">@student.Name</td>
+                            <td class="p-3 text-slate-300">@student.Department</td>
+                            <td class="p-3 font-mono text-emerald-400 font-semibold">@student.Gpa.ToString("0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Karşılaştırma Rehberi -->
+    <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-3">
+        <h3 class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Hangi Servis Ömrü Ne Zaman Tercih Edilmeli?</h3>
+        <ul class="text-xs text-slate-300 space-y-2 leading-relaxed">
+            <li><strong class="text-amber-400">Transient:</strong> Hafif, bellek tüketimi az, durum tutmayan (stateless) hesaplama servisleri veya mail gönderici gibi yardımcı araçlar.</li>
+            <li><strong class="text-sky-400">Scoped:</strong> Entity Framework Core DbContext, Unit of Work ve o anki HTTP isteğinde kullanıcıya özel veriyi taşıyan tüm iş katmanı servisleri.</li>
+            <li><strong class="text-emerald-400">Singleton:</strong> Bellek içi önbellek (IMemoryCache), sistem konfigürasyonu, logging altyapısı ve tüm kullanıcılar tarafından ortak paylaşılan kaynaklar.</li>
+        </ul>
+    </div>
+
+</div>

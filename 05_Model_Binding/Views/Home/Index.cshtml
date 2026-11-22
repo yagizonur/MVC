@@ -1,0 +1,98 @@
+﻿@model Kisi
+@{
+    ViewData["Title"] = "Tekil Model Binding";
+}
+
+<!--
+====================================================================
+KONU: TEKİL MODEL BINDING (STRONGLY-TYPED FORM)
+====================================================================
+1. Modern Tag Helpers (<input asp-for="Ad" />):
+   - Modelin "Ad" property'si ile input'un name, id ve value özelliklerini otomatik bağlar.
+   - HTML Helper olan @@Html.TextBoxFor yerine modern web standartlarında kullanılır.
+
+2. Model Binding Süreci:
+   - Form post edildiğinde, HTTP Request Body içerisindeki "Ad=Onur&Soyad=Yağız&Yas=30"
+     verisi okunur ve Controller'daki Kisi nesnesinin ilgili özelliklerine atanır.
+====================================================================
+-->
+
+<div class="space-y-6 max-w-4xl mx-auto">
+
+    <!-- Başlık ve Konu Özeti -->
+    <div class="border-b border-slate-800 pb-4">
+        <span class="inline-block px-2.5 py-1 text-xs font-semibold bg-indigo-500/20 text-indigo-300 rounded-full mb-2">
+            Modül 10: Model Binding
+        </span>
+        <h1 class="text-3xl font-extrabold text-white">Tekil Nesne ile Model Binding</h1>
+        <p class="text-slate-400 text-sm mt-1">İstemci form verilerinin güçlü tipli (Strongly-Typed) C# nesnesine otomatik dönüştürülmesi</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Sol Bölüm: Form Giriş Kartı -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span>📝</span>
+                <span>Kişi Bilgi Formu (POST)</span>
+            </h2>
+
+            <form asp-action="Index" method="post" class="space-y-4">
+                <div>
+                    <label asp-for="Ad" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Adınız</label>
+                    <input asp-for="Ad" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition" placeholder="Örn: Ahmet" />
+                </div>
+
+                <div>
+                    <label asp-for="Soyad" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Soyadınız</label>
+                    <input asp-for="Soyad" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition" placeholder="Örn: Yılmaz" />
+                </div>
+
+                <div>
+                    <label asp-for="Yas" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Yaşınız</label>
+                    <input asp-for="Yas" type="number" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition" placeholder="Örn: 28" />
+                </div>
+
+                <button type="submit" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-indigo-600/30">
+                    Formu Gönder ve Modeli Bind Et 🚀
+                </button>
+            </form>
+        </div>
+
+        <!-- Sağ Bölüm: Sonuç ve Bilgilendirme Kartı -->
+        <div class="space-y-4">
+
+            @if (ViewBag.IsPostBack == true)
+            {
+                <div class="bg-emerald-950/40 border border-emerald-500/50 rounded-2xl p-6 shadow-xl space-y-3">
+                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                        <span>✅</span>
+                        <span>@ViewBag.Message</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl space-y-1 font-mono text-xs text-slate-300 border border-slate-800">
+                        <p><span class="text-indigo-400">Model.Ad:</span> @Model?.Ad</p>
+                        <p><span class="text-indigo-400">Model.Soyad:</span> @Model?.Soyad</p>
+                        <p><span class="text-indigo-400">Model.Yas:</span> @Model?.Yas</p>
+                    </div>
+                </div>
+            }
+
+            <!-- Bilgilendirme Kutusu -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-3">
+                <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                    <span>🛡️</span>
+                    <span>Overposting (Mass Assignment) Koruması</span>
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Controller parametresinde kullanılan <code>[Bind("Ad,Soyad,Yas")]</code> özniteliği, istemciden gönderilen kötü niyetli ek parametrelerin (örneğin <code>IsAdmin=true</code>) modele sızmasını engeller.
+                </p>
+                <div class="bg-slate-900 p-3 rounded-xl text-xs font-mono text-indigo-300 border border-slate-800">
+                    public IActionResult Index([Bind("Ad,Soyad,Yas")] Kisi kisi)
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
