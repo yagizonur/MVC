@@ -69,5 +69,6 @@ namespace _10_AutoMapper.MappingProfile
         {
             return DateTime.TryParse(timestamp, out var parseDate) ? parseDate : DateTime.Now;
         }
+   
     }
 }

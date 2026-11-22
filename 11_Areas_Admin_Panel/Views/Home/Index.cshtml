@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa (Müşteri Arayüzü)";
+}
+
+<!--
+====================================================================
+KONU: ASP.NET CORE AREA (ALANLAR) MİMARİSİ
+====================================================================
+1. Area Nedir?
+   - Büyük kurumsal projelerde uygulamanın işlevsel parçalara (Admin, Blog, Müşteri)
+     bölünmesini sağlar.
+   - Her Area kendi Controllers, Models ve Views klasörlerine ve kendi Layout'una sahiptir.
+
+2. Tag Helper ile Area Yönlendirmesi:
+   - <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Paneli</a>
+   - asp-area özniteliği rota oluştururken {area:exists} deseniyle eşleşir.
+====================================================================
+-->
+
+<div class="space-y-6 max-w-5xl mx-auto">
+
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-indigo-500/30 rounded-3xl p-8 shadow-2xl space-y-4">
+        <span class="inline-block px-3 py-1 text-xs font-semibold bg-indigo-500/30 text-indigo-300 rounded-full">
+            Modül 18: Area Mimarisi
+        </span>
+        <h1 class="text-3xl md:text-4xl font-black text-white leading-tight">
+            ASP.NET Core Area & Admin Paneli Mimarisi
+        </h1>
+        <p class="text-slate-300 text-sm max-w-2xl leading-relaxed">
+            Şu anda kullanıcıların gezindiği <strong>Genel (Public) Web Arayüzündesiniz</strong>. Arka planda yöneticilerin kullandığı tamamen izole edilmiş yönetim panelini incelemek için aşağıdaki butonu kullanabilirsiniz.
+        </p>
+
+        <div class="pt-2">
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl text-sm transition shadow-xl shadow-indigo-600/40">
+                <span>🔐</span>
+                <span>Admin Paneline Giriş Yap (/Admin/Dashboard/Index)</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Area Mimarisi Açıklama Kartları -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-2">
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block">1. Mantıksal İzolasyon</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Admin, Bayi ve Son Kullanıcı sayfalarının kodları, şablonları ve yetkileri birbirine karışmaz.
+            </p>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-2">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">2. Ayrı Layout Mimarisi</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Genel site standart bir navbar kullanırken, Admin Area'sı yan menülü (sidebar) zengin bir dashboard layout'u kullanır.
+            </p>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">3. [Area("Admin")] Özniteliği</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Admin klasöründeki Controller'ların başına konulan <code>[Area("Admin")]</code> ile rota otomatik olarak <code>/Admin/...</code> olur.
+            </p>
+        </div>
+
+    </div>
+
+</div>

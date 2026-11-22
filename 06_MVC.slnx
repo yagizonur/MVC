@@ -9,4 +9,5 @@
   <Project Path="08_Middleware/08_Middleware.csproj" Id="aff9970c-23e0-43ce-a937-c99bd8e6da87" />
   <Project Path="09_Filter_Operations/09_Filter_Operations.csproj" Id="98bbf381-b931-4ba5-bd0a-ecf1bb96519c" />
   <Project Path="10_AutoMapper/10_AutoMapper.csproj" Id="45e33833-f993-4d51-9292-c71826dcddf1" />
+  <Project Path="11_Areas_Admin_Panel/11_Areas_Admin_Panel.csproj" Id="982adf87-207b-42ba-8551-e437e057b78c" />
 </Solution>
